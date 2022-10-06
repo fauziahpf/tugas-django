@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!doctype html>
+
+<html lang="en">
+
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                // update table
+                $.get("http://localhost:8000/wishlist/json/", function(data) {
+                for(var i = 0; i < data.length; i++){
+                    var row = $('<tr><td>' + data[i].fields.nama_barang + 
+                                    '</td><td>' + data[i].fields.harga_barang + 
+                                    '</td><td>' + data[i].fields.deskripsi + '</tr><td>'); 
+                        
+                        $('#tabel_barang').append(row); 
+                    }; 
+
+                });
+                            
+                $('#create_wishlist').click(function() {
+                    var nama_barang = $("#input_nama").val();
+                    var harga_barang = $("#input_harga").val();
+                    var deskripsi = $("#input_deskripsi").val();
+                    var csrfmiddlewaretoken = $('input[name=csrfmiddlewaretoken]').val();
+                    
+                    $.post("http://localhost:8000/wishlist/ajax/submit/",
+                    {
+                        nama_barang,
+                        harga_barang,
+                        deskripsi,
+                        csrfmiddlewaretoken,
+                    },
+                    
+                    function(data, status) {
+                        document.getElementById("create_wishlist").reset();
+
+                        var row = $('<tr><td>' + nama_barang + 
+                                    '</td><td>' + harga_barang + 
+                                    '</td><td>' + deskripsi + '</tr><td>'); 
+                        
+                        $('#tabel_barang').append(row);  
+                    }
+                    );
+                });
+                
+            });
+
+        </script>
+    </head>
+
+    <body>
+        <nav class="navbar bg-light">
+            <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Welcome, {{nama}}!</span>
+            <button type="button" class="btn btn-outline-primary"" ><a href="{% url 'wishlist:logout' %}">Logout</a></button>
+            </div>
+        </nav>
+
+        <table class="table table-hover table-bordered" id="tabel_barang">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nama Barang</th>
+                    <th>Harga Barang</th>
+                    <th>Deskripsi</th>
+                </tr>
+            </thead>
+
+        </table>
+
+        <form action="" method="POST">
+            {% csrf_token %}
+            <table class="m-10">
+                <tr>
+                    <p> Nama Barang: </p>
+                    <input type="text" name="nama" placeholder= "Nama Barang" class="form-control" id="input_nama">
+                </tr>
+                <tr>
+                    <p> Harga Barang: </p>
+                    <input type="text" name="harga" placeholder="Harga Barang" class="form-control" id="input_harga">
+                </tr>
+                <tr>
+                    <p> Deskripsi: </p>
+                    <input type="text" name="deskripsi" placeholder="Deskripsi" class="form-control" id="input_deskripsi">
+                </tr>
+                <tr>
+                    <input class="btn login_btn mt-4 mb-4" 
+                        style="background: #7f52a9; color:white; font-size: 14px; border-radius: 20px; width:40%" 
+                        onmouseover="this.style.backgroundColor='#555'" 
+                        onmouseout="this.style.backgroundColor='#7f52a9'" 
+                        type="submit" name="submit" value="Create task">
+                </tr>
+            </table> 
+        </form>
+        
+        <!-- <footer class="blockquote-footer">Sesi terakhir login: {{ last_login }}</footer> -->
+        <p>Sesi terakhir login: {{ last_login }}</p>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
+    </body>
+</html>
+
+{% endblock content %}
