@@ -34,13 +34,12 @@ def with_ajax(request):
 
 def create_wishlist(request):
     if request.method == "POST":
-        nama_barang = req.POST.get("nama_barang")
-        harga_barang = req.POST.get("harga_barang")
-        deskripsi = req.POST.get("deskripsi")
+        nama_barang = request.POST.get("nama_barang")
+        harga_barang = request.POST.get("harga_barang")
+        deskripsi = request.POST.get("deskripsi")
         BarangWishlist.objects.create(nama_barang=nama_barang, harga_barang=harga_barang, deskripsi=deskripsi)
         return HttpResponse()
     else:
-        # print("here")
         return redirect("wishlist:show_wishlist")
 
 def show_xml(request):
